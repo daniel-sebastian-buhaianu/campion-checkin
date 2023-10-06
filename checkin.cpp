@@ -44,50 +44,55 @@ int main()
 
 	nrg = N < K ? N : K;
 
-	st = -1, dr = tmin+1;
-
-	while (dr-st > 1)
+	if (P)
 	{
-		mij = st + (dr-st)/2;
+		st = -1, dr = tmin+1;
 
-		// verific daca pot livra P bagaje in mij secunde
-	
-		for (i = 0; i < N; i++)
+		while (dr-st > 1)
 		{
-			maxbg[i] = (mij-b[i])/a[i];
+			mij = st + (dr-st)/2;
 
-			if (maxbg[i] <= 0)
+			// verific daca pot livra P bagaje in mij secunde
+		
+			for (i = 0; i < N; i++)
 			{
-				maxbg[i] = -1;
+				maxbg[i] = (mij-b[i])/a[i];
+
+				if (maxbg[i] <= 0)
+				{
+					maxbg[i] = -1;
+				}
+			}
+
+			sort(maxbg, maxbg+N, compar);
+
+			for (sum = i = 0; i < nrg; i++)
+			{
+				if (maxbg[i] > 0)
+				{
+					sum += maxbg[i];
+				}
+			}
+			
+			if (sum < P)
+			{
+				// nu pot livra P bagaje in mij secunde
+				st = mij;	
+			}
+			else
+			{
+				// pot livra P bagaje in mij secunde
+				dr = mij;	
 			}
 		}
 
-		sort(maxbg, maxbg+N, compar);
-
-		for (sum = i = 0; i < nrg; i++)
-		{
-			if (maxbg[i] > 0)
-			{
-				sum += maxbg[i];
-			}
-		}
-
-		if (sum < P)
-		{
-			// nu pot livra P bagaje in mij secunde
-			st = mij;	
-		}
-		else
-		{
-			// pot livra P bagaje in mij secunde
-			dr = mij;	
-		}
+		tmin = dr;
 	}
 
-	fout << dr;
+	fout << tmin;
 
 	fout.close();
 
 	return 0;
 }
-// scor 90
+// scor 100
