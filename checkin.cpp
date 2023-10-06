@@ -2,77 +2,73 @@
 #include <algorithm>
 
 #define NMAX 1000
+#define TMAX 15000000
 
 using namespace std;
 
 ifstream fin("checkin.in");
 ofstream fout("checkin.out");
 
-struct ghiseu { int tb, tt; };
-/**
- * tb = timp procesare 1 bagaj (secunde)
- * tt = timp procesare N tichete (secunde)
-**/
-
-bool compar(ghiseu a, ghiseu b)
+bool compar(int x, int y)
 {
-	if (a.tb+a.tt < b.tb+b.tt)
-	{
-		return 1;
-	}
-
-	if (a.tb+a.tt == b.tb+b.tt
-		&& a.tb < b.tb)
-	{
-		return 1;
-	}
-
-	return 0;
+	return x > y;
 }
 
 int main()
 {
-	int N, i, K, P, nrg, st, dr, mij, nrb, sum;
+	int N, i, K, P, tmin, nrg, st, dr, mij;
+	long long sum;
 
 	fin >> N;
-
-	ghiseu g[N];
+	
+	int a[N], b[N], maxbg[N];
 
 	for (i = 0 ; i < N; i++)
 	{
-		fin >> g[i].tb >> g[i].tt;
+		fin >> a[i] >> b[i];
 	}
 
 	fin >> K >> P;
 
 	fin.close();
 
-	sort(g, g+N, compar);
-	
+	tmin = TMAX;
+
+	for (i = 0; i < N; i++)
+	{
+		if (a[i]*P + b[i] < tmin)
+		{
+			tmin = a[i]*P + b[i];
+		}
+	}
+
 	nrg = N < K ? N : K;
 
-	int maxb[nrg];
-
-	st = -1, dr = g[0].tb*P + g[0].tt + 1;
+	st = -1, dr = tmin+1;
 
 	while (dr-st > 1)
 	{
 		mij = st + (dr-st)/2;
 
 		// verific daca pot livra P bagaje in mij secunde
-
-		for (i = 0; i < nrg; i++)
+	
+		for (i = 0; i < N; i++)
 		{
-			nrb = (mij-g[i].tt)/g[i].tb;
+			maxbg[i] = (mij-b[i])/a[i];
 
-			maxb[i] = nrb <= 0 ? -1 : nrb;
+			if (maxbg[i] <= 0)
+			{
+				maxbg[i] = -1;
+			}
 		}
+
+		sort(maxbg, maxbg+N, compar);
 
 		for (sum = i = 0; i < nrg; i++)
 		{
-			if (maxb[i] > 0)
+			if (maxbg[i] > 0)
 			{
-				sum += maxb[i];
+				sum += maxbg[i];
 			}
 		}
 
@@ -94,4 +90,4 @@ int main()
 
 	return 0;
 }
-// scor 40
+// scor 90
